@@ -5,9 +5,13 @@
       url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    yomiyasu = {
+      url = "github:nanaism/yomiyasu";
+      flake = false;
+    };
   };
 
-  outputs = { nixpkgs, home-manager, ... }: {
+  outputs = { nixpkgs, home-manager, ... }@inputs: {
     nixosConfigurations.devbox = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
@@ -16,6 +20,7 @@
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
+          home-manager.extraSpecialArgs = { inherit inputs; };
           home-manager.users.rechella = import ./home/rechella.nix;
         }
       ];

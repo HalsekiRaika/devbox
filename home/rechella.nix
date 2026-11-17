@@ -1,12 +1,19 @@
 { 
   pkgs,
+  inputs,
   ...
 }: 
+let
+  yomiyasu-lint = pkgs.writeShellScriptBin "yomiyasu-lint" ''
+    exec ${pkgs.python3}/bin/python3 ${inputs.yomiyasu}/scripts/yomiyasu_lint.py "$@"
+  '';
+in
 {
   home.stateVersion = "26.05";
 
   home.packages = with pkgs; [
     ripgrep
+    yomiyasu-lint
   ];
   
   programs.direnv = { 
@@ -43,6 +50,10 @@
       ".direnv/"
     ];
   };
+
+  # Agent Skills
+  home.file.".claude/skills/yomiyasu".source = inputs.yomiyasu;
+  home.file.".agents/skills/yomiyasu".source = inputs.yomiyasu;
 
   programs.zed-editor = {
     enable = true;
